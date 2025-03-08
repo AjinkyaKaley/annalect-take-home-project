@@ -1,6 +1,12 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: "postgresql://admin:root@db:5432/test_db"
+    depends_on:
+      - db
     ports:
       - "8000:8000"
   
@@ -15,6 +21,7 @@ services:
       POSTGRES_DB: test_db
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
     restart: unless-stopped
   
   pgadmin:
