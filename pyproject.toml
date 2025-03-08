@@ -1,0 +1,14 @@
+[project]
+name = "take-home-test"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "alembic>=1.15.1",
+    "fastapi[standard]>=0.115.11",
+    "httpx>=0.28.1",
+    "psycopg>=3.2.5",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.8.1",
+]
