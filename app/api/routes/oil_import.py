@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from typing import Optional
 from settings import settings
 from psycopg.rows import class_row
-import dataclasses
 from typing import Any
 import psycopg
 import os
@@ -23,6 +23,16 @@ class oil_data(BaseModel):
 
 class oil_record(oil_data):
     id: int
+
+class oil_update_record(BaseModel):
+    year: Optional[int] 
+    month: Optional[int]
+    originname: Optional[str]
+    origintypename: Optional[str]
+    destinationname: Optional[str]
+    destinationtypename: Optional[str]
+    gradename: Optional[str]
+    quantity: Optional[int]
 
 def get_list(filter:str, page_num:int, page_limit:int, conn):
     column_name, value = filter.split("=")
@@ -67,7 +77,46 @@ def insert_record(data, conn)->int:
 
         id = cur.fetchone()[0]
         return id
+    
+def check_valid_id(id: int, conn):
+    query = """
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM commodity.oil
+                    WHERE id=%s
+                )
+            """
+    with conn.cursor() as cur:
+        params = [id]
+        cur.execute(query, params)
+        return cur.fetchone()[0]
+    
+    
 
+def update_record(id, data, conn):
+    data = data.model_dump()
+    update_col_values = []
+    values = []
+    for k,v in data.items():
+        if v is not None:
+            update_col_values.append(f"{k}=%s")
+            values.append(v)
+
+    values.append(id)
+    update_cols = ",".join(update_col_values)
+
+    query = f"""
+                UPDATE commodity.oil
+                SET {update_cols}
+                WHERE id = %s
+            """
+    print(query)
+    print(values)
+    with conn.cursor() as cur:
+        cur.execute(query, values)
+        conn.commit()
+
+        return get_record(id, conn)
 
 def get_dbconn():
     PG_USER = settings.PG_USER
@@ -102,6 +151,8 @@ def get_record_by_id(
     id: int,
     conn=Depends(get_dbconn)
 )->Any:
+    if not check_valid_id(id):
+        raise HTTPException(400, "Invalid id")
     return get_record(id, conn)
 
 @router.put("/record")
@@ -110,3 +161,14 @@ def add_new_record(
     conn=Depends(get_dbconn)
 )->int:
     return insert_record(data, conn)
+
+@router.put("/record/{id}")
+def update_full_record(
+    id: int,
+    data: oil_update_record,
+    conn=Depends(get_dbconn)
+):
+    if not check_valid_id(id, conn):
+        raise HTTPException(400, "Invalid id")
+
+    return update_record(id, data, conn)
