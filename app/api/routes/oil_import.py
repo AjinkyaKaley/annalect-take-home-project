@@ -90,8 +90,6 @@ def check_valid_id(id: int, conn):
         params = [id]
         cur.execute(query, params)
         return cur.fetchone()[0]
-    
-    
 
 def update_record(id, data, conn):
     data = data.model_dump()
@@ -110,13 +108,24 @@ def update_record(id, data, conn):
                 SET {update_cols}
                 WHERE id = %s
             """
-    print(query)
-    print(values)
+
     with conn.cursor() as cur:
         cur.execute(query, values)
         conn.commit()
 
         return get_record(id, conn)
+    
+def delete_record(id:int, conn):
+    query = """
+            DELETE FROM commodity.oil
+            WHERE id=%s; 
+            """
+    values = [id]
+
+    with conn.cursor() as cur:
+        cur.execute(query, values)
+        conn.commit()
+
 
 def get_dbconn():
     PG_USER = settings.PG_USER
@@ -151,7 +160,7 @@ def get_record_by_id(
     id: int,
     conn=Depends(get_dbconn)
 )->Any:
-    if not check_valid_id(id):
+    if not check_valid_id(id, conn):
         raise HTTPException(400, "Invalid id")
     return get_record(id, conn)
 
@@ -162,7 +171,7 @@ def add_new_record(
 )->int:
     return insert_record(data, conn)
 
-@router.put("/record/{id}")
+@router.patch("/record/{id}")
 def update_full_record(
     id: int,
     data: oil_update_record,
@@ -172,3 +181,14 @@ def update_full_record(
         raise HTTPException(400, "Invalid id")
 
     return update_record(id, data, conn)
+
+@router.delete("/record/{id}")
+def delete_full_record(
+    id: int,
+    conn=Depends(get_dbconn)
+):
+    if not check_valid_id(id, conn):
+        raise Exception(400, "Invalid id")
+    
+    delete_record(id, conn)
+    return "Successful"
