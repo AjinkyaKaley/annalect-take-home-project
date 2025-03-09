@@ -19,9 +19,11 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: root
       POSTGRES_DB: test_db
+      PGDATA: /var/lib/postgresql/custom_data
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/postgresql/csv_files
     restart: unless-stopped
   
   pgadmin:
