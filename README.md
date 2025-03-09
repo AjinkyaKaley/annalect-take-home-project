@@ -29,18 +29,18 @@ https://github.com/AjinkyaKaley/annalect-take-home-project.git
 start the docker application on local machine
 
 ### How to start the application
-Open terminal\
-Navaigate to the directory where the repository is cloned\
-Check if the shell has access to docker and docker compose command\
-Run `docker compose build`\
-Run `docker compose up`\
-Fastapi API Application setup complete and service is ready for use\
+1. Open terminal\
+2. Navaigate to the directory where the repository is cloned\
+3. Check if the shell has access to docker and docker compose command\
+4. Run `docker compose build`\
+5. Run `docker compose up`\
+6. Fastapi API Application setup complete and service is ready for use
 
 ## Accessing Swagger UI
 http://localhost:8000/docs
 
 
-## Tech Stacks
+## Tech Stack
 - FastAPI
 - Pydantic
 - Postresql
@@ -62,7 +62,6 @@ When `docker comopose up` runs, it starts the following 3 services
 - sets the `STAGE=prod` (If you are running locally set the environment variable STAGE)
 - installs python dependencies listed in `pyproject.toml`
 - runs command `uvicorn main:app --host 0.0.0.0 --port 8000`
-- 
 
 **db** - service that creates postgre server and data volume, using the credentials listed in .env files
 
