@@ -8,9 +8,17 @@ router = APIRouter(prefix="/oil_price", tags=["oil"])
 
 DB_CONNSTR=os.environ.get("DATABASE_URL", None)
 
-def get_list(conn):
+def get_list(conn, page_num:int, page_limit:int):
     with conn.cursor() as cur:
-        cur.execute("SELECT * FROM commodity.oil o WHERE o.origintypename = 'Country'")
+        query = f"""
+                    SELECT * 
+                    FROM 
+                        commodity.oil o
+                    WHERE o.origintypename = 'Country'
+                    LIMIT {page_limit}
+                    OFFSET {page_num}
+                """
+        cur.execute(query)
         return cur.fetchall()
 
 
@@ -33,6 +41,8 @@ def get_dbconn():
 
 @router.get("/")
 def list_items(
+    page_num=int,
+    page_limit=int,
     conn=Depends(get_dbconn)
 ) -> Any:
-    return get_list(conn)
+    return get_list(conn, page_num, page_limit)
