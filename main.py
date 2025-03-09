@@ -9,4 +9,4 @@ app = FastAPI(
 
 DATABASE_URL = os.environ.get("DATABASE_URL", None)
 print(f"printing db {DATABASE_URL}")
-app.include_router(api_router)
+app.include_router(api_router, prefix="/commodity")

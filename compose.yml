@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://localhost:5432?user=${PG_USER}&password=${PG_PASSWORD}
+      DATABASE_URL: postgresql://db:5432?user=${PG_USER}&password=${PG_PASSWORD}
     depends_on:
       - db
     ports:
