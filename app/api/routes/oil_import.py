@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from settings import settings
+from psycopg.rows import class_row
+from dataclasses import dataclass
 from typing import Any
 import psycopg
 import os
@@ -8,13 +10,29 @@ router = APIRouter(prefix="/oil_price", tags=["oil"])
 
 DB_CONNSTR=os.environ.get("DATABASE_URL", None)
 
-def get_list(conn, page_num:int, page_limit:int):
-    with conn.cursor() as cur:
+
+@dataclass
+class oil_data:
+    year:int
+    month: int
+    originname: str
+    origintypename: str
+    destinationname: str
+    destinationtypename: str
+    gradename: str
+    quantity: int
+
+def get_list(filter:str, page_num:int, page_limit:int, conn):
+    column_name, value = filter.split("=")
+    column_name = column_name.strip()
+    value = value.strip()
+
+    with conn.cursor(row_factory=class_row(oil_data)) as cur:
         query = f"""
                     SELECT * 
                     FROM 
                         commodity.oil o
-                    WHERE o.origintypename = 'Country'
+                    WHERE o.{column_name} = '{value}'
                     LIMIT {page_limit}
                     OFFSET {page_num}
                 """
@@ -41,8 +59,9 @@ def get_dbconn():
 
 @router.get("/")
 def list_items(
+    filter=str,
     page_num=int,
     page_limit=int,
     conn=Depends(get_dbconn)
 ) -> Any:
-    return get_list(conn, page_num, page_limit)
+    return get_list(filter, page_num, page_limit, conn)
