@@ -64,6 +64,13 @@ When `docker comopose up` runs, it starts the following 3 services
 - runs command `uvicorn main:app --host 0.0.0.0 --port 8000`
 
 **db** - service that creates postgre server and data volume, using the credentials listed in .env files
+- init-scripts directory contains DDL scripts, that creates schema, table and insert
+- `01_create_schema.sql` creates a commodity schema
+- `02_create_tables.sql` creates a oil table and adds addtional `id` column as primary key
+- `03_insert_data.sql` bulk loads the data into the table
 
 **pgadmin** - service thats the pgadmin app on docker container, and can be accessed via http://localhost:5050
 
+
+## Troubleshoot guide
+- init scripts associated with db service, runs only when the volume is created for the first time, they do not run in volume already 
