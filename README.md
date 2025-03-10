@@ -74,7 +74,7 @@ The docker compose is setup to create to volumes, where the table data is stored
 **pgadmin** - service thats the pgadmin app on docker container, and can be accessed via http://localhost:5050
 
 
-## Troubleshoot guide
+## Troubleshooting guide
 ### For clean restart
 - open new terminal
 - run `docker compose down`
