@@ -1,17 +1,16 @@
 from psycopg.rows import class_row
 from models.oil_record import oil_record
 
-def get_list(filter:str, page_num:int, page_limit:int, conn):
-    column_name, value = filter.split("=")
-    column_name = column_name.strip()
-    value = value.strip()
+def get_list(colname:str, filter:str, page_num:int, page_limit:int, conn):
+    colname = colname.strip()
+    filter = filter.strip()
 
     with conn.cursor(row_factory=class_row(oil_record)) as cur:
         query = f"""
                     SELECT * 
                     FROM 
                         commodity.oil o
-                    WHERE o.{column_name} = '{value}'
+                    WHERE o.{colname} = '{filter}'
                     LIMIT {page_limit}
                     OFFSET {page_num}
                 """
