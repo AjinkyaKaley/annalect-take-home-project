@@ -69,8 +69,17 @@ When `docker comopose up` runs, it starts the following 3 services
 - `02_create_tables.sql` creates a oil table and adds addtional `id` column as primary key
 - `03_insert_data.sql` bulk loads the data into the table
 
+The docker compose is setup to create to volumes, where the table data is stored and for csv file data its stored under `./data:/var/lib/postgresql/csv_files`
+
 **pgadmin** - service thats the pgadmin app on docker container, and can be accessed via http://localhost:5050
 
 
 ## Troubleshoot guide
-- init scripts associated with db service, runs only when the volume is created for the first time, they do not run in volume already 
+### For clean restart
+- open new terminal
+- run `docker compose down`
+- run `docker volume ls` and get volume by name `take_home_test_postgres-data`
+- run `docker volume rm take_home_test_postgres-data` to delete the volume, this will wipe out all the data in pg database
+- run `docker compose build` (builds)
+- run `docker compose up`   (starts)
+- clean restart complete
