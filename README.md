@@ -29,11 +29,11 @@ https://github.com/AjinkyaKaley/annalect-take-home-project.git
 start the docker application on local machine
 
 ### How to start the application
-1. Open terminal\
-2. Navaigate to the directory where the repository is cloned\
-3. Check if the shell has access to docker and docker compose command\
-4. Run `docker compose build`\
-5. Run `docker compose up`\
+1. Open terminal
+2. Navaigate to the directory where the repository is cloned
+3. Check if the shell has access to docker and docker compose command
+4. Run `docker compose build`
+5. Run `docker compose up`
 6. Fastapi API Application setup complete and service is ready for use
 
 ## Accessing Swagger UI
